@@ -1,0 +1,10 @@
+{
+    "Sandbox_SurvivorInnerVoice": "Survivor Inner Voice",
+    "Sandbox_SurvivorInnerVoice_Frequency": "Line frequency",
+    "Sandbox_SurvivorInnerVoice_Frequency_tooltip": "Controls how often lines appear. The actual interval varies randomly instead of using a fixed timer.",
+    "Sandbox_SurvivorInnerVoice_Frequency_option1": "Very rare",
+    "Sandbox_SurvivorInnerVoice_Frequency_option2": "Rare",
+    "Sandbox_SurvivorInnerVoice_Frequency_option3": "Normal",
+    "Sandbox_SurvivorInnerVoice_Frequency_option4": "Frequent",
+    "Sandbox_SurvivorInnerVoice_Frequency_option5": "Very frequent"
+}

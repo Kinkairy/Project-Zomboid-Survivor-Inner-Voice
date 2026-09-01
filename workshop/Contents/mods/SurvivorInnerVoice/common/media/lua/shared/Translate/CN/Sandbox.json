@@ -1,0 +1,10 @@
+{
+    "Sandbox_SurvivorInnerVoice": "幸存者心声",
+    "Sandbox_SurvivorInnerVoice_Frequency": "台词频率",
+    "Sandbox_SurvivorInnerVoice_Frequency_tooltip": "控制台词出现的频率。实际间隔会随机变化，不会固定时间出现。",
+    "Sandbox_SurvivorInnerVoice_Frequency_option1": "很少",
+    "Sandbox_SurvivorInnerVoice_Frequency_option2": "较少",
+    "Sandbox_SurvivorInnerVoice_Frequency_option3": "普通",
+    "Sandbox_SurvivorInnerVoice_Frequency_option4": "频繁",
+    "Sandbox_SurvivorInnerVoice_Frequency_option5": "很频繁"
+}

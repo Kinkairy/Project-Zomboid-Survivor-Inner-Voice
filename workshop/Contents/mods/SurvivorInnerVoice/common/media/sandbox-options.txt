@@ -1,0 +1,7 @@
+VERSION = 1,
+
+option SurvivorInnerVoice.Frequency = {
+    type = enum, numValues = 5, default = 3,
+    page = SurvivorInnerVoice,
+    translation = SurvivorInnerVoice_Frequency,
+}
