@@ -5,14 +5,17 @@ description=[h1]幸存者心声[/h1]
 [quote]角色会根据自己的饥饿、口渴、疲劳、疼痛、情绪和其他当前状态，用简短直白的头顶文字自言自语。[/quote]
 
 [h1]状态心声[/h1]
+
 [list]
 [*]覆盖角色能够直接感受到的主要原版状态，也包含吃饱等正面状态。
 [*]同一种状态和严重程度有多句不同说法，减少重复感。
 [*]状态出现、加重、减轻和完全恢复时，都可能出现对应台词。
 [*]进入世界后会先等待一段时间，不会刚加载完成就立刻刷出台词。
+[*]原版状态标题和说明固定使用小号深灰色 <内容> 头顶提示，不带图标或斜体；原创角色心声不加括号，并在句末留出间距后显示对应的原版 Moodle 图标。
 [/list]
 
 [h1]严重程度与颜色[/h1]
+
 [list]
 [*]负面状态从淡红逐渐变为深红，状态越严重，台词也越明确。
 [*]正面状态从淡绿逐渐变为深绿；负面状态完全恢复时会显示浅绿色恢复台词。
@@ -20,48 +23,63 @@ description=[h1]幸存者心声[/h1]
 [/list]
 
 [h1]沙盒选项[/h1]
+
 [list]
-[*]只有一个“台词频率”下拉选项：很少、较少、普通、频繁、很频繁。
+[*]角色心声字体大小可选小、中、大、特大，默认中；原版状态提示固定为小号。
+[*]“显示原版状态提示”默认开启；关闭后只显示角色心声。
+[*]台词频率可选很少、较少、普通、频繁、很频繁。
 [*]实际出现时间会随机变化，不会按固定秒数重复。
 [*]“很频繁”会保留每一次状态等级变化，方便观察或调试。
 [/list]
 
 [h1]兼容性[/h1]
-支持 Project Zomboid Build 42.20、单人游戏、多人游戏和专用服务器；无前置依赖，可加入现有存档。[br][br]
-Workshop ID: 3793128772[br]
-Mod ID: SurvivorInnerVoice[br]
-Version: 0.3.0
+
+支持 Project Zomboid Build 42.20、单人游戏、多人游戏和专用服务器；无前置依赖，可加入现有存档。
+
+[b]Workshop ID:[/b] 3793128772
+[b]Mod ID:[/b] SurvivorInnerVoice
+[b]Version:[/b] 0.3.3
 
 [hr]
+
 [h1]Survivor Inner Voice[/h1]
+
 [quote]Your character reacts to hunger, thirst, fatigue, pain, mood, and other current conditions with short, readable overhead thoughts.[/quote]
 
 [h1]State Reactions[/h1]
+
 [list]
 [*]Covers the major vanilla conditions a character can directly feel, including positive states such as being well fed.
 [*]Each state and severity has multiple lines to reduce repetition.
 [*]Lines can appear when a state begins, worsens, improves, or fully clears.
 [*]A short randomized delay after entering the world prevents immediate message spam.
+[*]Vanilla state titles and descriptions use a fixed Small dark-gray <text> overhead prompt without an icon or italics; original thoughts are unwrapped and leave a gap before the matching vanilla Moodle icon.
 [/list]
 
 [h1]Severity and Color[/h1]
+
 [list]
 [*]Negative states progress from pale red to deep red, with clearer wording at higher severity.
 [*]Positive states progress from pale green to deep green; full recovery from a negative state uses a pale-green recovery line.
 [*]Colors follow the current vanilla positive and negative highlight-color settings.
 [/list]
 
-[h1]Sandbox Option[/h1]
+[h1]Sandbox Options[/h1]
+
 [list]
-[*]One dropdown controls frequency: Very Rare, Rare, Normal, Frequent, or Very Frequent.
+[*]Inner-voice font size offers Small, Medium, Large, or Massive and defaults to Medium; vanilla state prompts stay Small.
+[*]Show vanilla state prompts is enabled by default; disable it to show only character thoughts.
+[*]Frequency offers Very Rare, Rare, Normal, Frequent, or Very Frequent.
 [*]Actual timing is randomized instead of repeating at fixed intervals.
 [*]Very Frequent preserves every state-level change for observation and debugging.
 [/list]
 
 [h1]Compatibility[/h1]
-Supports Project Zomboid Build 42.20, singleplayer, multiplayer, and dedicated servers. No dependencies; safe to add to an existing save.[br][br]
-Workshop ID: 3793128772[br]
-Mod ID: SurvivorInnerVoice[br]
-Version: 0.3.0
+
+Supports Project Zomboid Build 42.20, singleplayer, multiplayer, and dedicated servers. No dependencies; safe to add to an existing save.
+
+[b]Workshop ID:[/b] 3793128772
+[b]Mod ID:[/b] SurvivorInnerVoice
+[b]Version:[/b] 0.3.3
 tags=Build 42;Multiplayer;Interface;QOL;Realistic
-visibility=private
+visibility=public

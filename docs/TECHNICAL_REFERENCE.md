@@ -1,7 +1,7 @@
-# Survivor Inner Voice 0.3.0 技术参考
+# Survivor Inner Voice 0.3.3 技术参考
 
-本文档描述当前公开版本。适用范围：Project Zomboid Build 42.20，Workshop `3793128772`，
-Mod ID `SurvivorInnerVoice`，公开版本 `0.3.0`，无外部依赖。
+本文档描述当前公开 Workshop 版本 `0.3.3`。适用范围：Project Zomboid
+Build 42.20，Workshop `3793128772`，Mod ID `SurvivorInnerVoice`，无外部依赖。
 
 ## 1. 设计边界
 
@@ -12,7 +12,12 @@ Mod ID `SurvivorInnerVoice`，公开版本 `0.3.0`，无外部依赖。
 
 - 正式 moodle 的标题和说明通过游戏翻译 key 在运行时解析，不复制成第二份自定义文本；
 - 颜色复用玩家当前的原版正面与负面高亮色，并使用原版灰色到高亮色的等级插值；
-- 头顶文字使用角色的 `addLineChatElement`，不调用声音或聊天命令；
+- 原版提示和原创心声均使用角色的原版 `setHaloNote`；系统提示以灰色 `<内容>` 表示且不带图标，
+  原创心声以严重度颜色和句末 Moodle 图标区分；
+- 角色心声字体可选原版 `Small / Medium / Large / Massive`，默认 `Medium`；原版提示固定为
+  `Small`，并可由默认开启的官方布尔沙盒选项整体隐藏；
+- 原创心声的状态图标通过 halo-note 的原版 `TextDrawObject` 支持的 `[img=…]` 标记引用 B42
+  自带 Moodle 纹理，不复制图片也不建立自定义渲染器；
 - Build 42.20 的正式 `MoodleType` 和 `CharacterStat` 枚举是状态读取边界。
 
 自建逻辑只包括原版没有的状态目录、双向台词 key、随机调度、最近台词避重、变化队列、
@@ -22,7 +27,7 @@ Mod ID `SurvivorInnerVoice`，公开版本 `0.3.0`，无外部依赖。
 
 | 模块 | 职责 |
 | --- | --- |
-| `SIV_Catalog.lua` | 唯一状态表、等级归一化、稳定 key、原版槽位、颜色插值与协议 allowlist |
+| `SIV_Catalog.lua` | 唯一状态表、等级归一化、稳定 key、原版槽位分类、官方 Moodle 图标路径、颜色插值与协议 allowlist |
 | `SIV_Scheduler.lua` | 状态快照比较、升降队列、优先级、随机截止时间、提醒与最近台词避重 |
 | `SIV_Client.lua` | 一秒节流取样、沙盒频率映射、原版颜色读取与本地头顶渲染 |
 | `SIV_Server.lua` | 可选 `spoken` 语义事件的发送者身份、参数验证、三秒限流与广播 |
@@ -56,7 +61,8 @@ Mod ID `SurvivorInnerVoice`，公开版本 `0.3.0`，无外部依赖。
 
 98 组 × 2 个方向 × 8 个位置，共 1568 个逻辑台词槽位。其中 191 个 `rise` 槽位直接解析
 原版文本：93 个正式 moodle 组各使用标题和说明两个槽位，着火使用一个原版标签槽位，烟瘾
-四级各使用一个原版标签槽位。剩余 1377 个槽位由 CN、CH、EN 三语自定义文本提供。
+四级各使用一个原版标签槽位。目录用同一组状态、方向和序号规则把这 191 个槽位标记为
+`vanilla`，剩余 1377 个三语自定义槽位标记为 `thought`，不会根据文本内容猜测类型。
 
 自定义 key 格式为：
 
@@ -76,7 +82,11 @@ IGUI_SIV_<state>_<RISE|FALL>_L<phraseLevel>_<01..08>
 `SIV.Scheduler` 是不读取游戏对象的纯状态机。客户端每秒构造一次状态快照并调用 `scan`。
 首次扫描只初始化状态和随机静默截止时间，不立即显示台词。
 
-沙盒只暴露 `Frequency` 一个五值枚举：
+沙盒暴露 `Frequency` 五值枚举、`FontSize` 四值枚举和默认开启的布尔值
+`ShowVanillaPrompts`。`FontSize` 只控制角色心声，依次为原版
+`Small / Medium / Large / Massive`，默认值 2，即 `Medium`。原版状态提示固定使用 `Small`。
+关闭 `ShowVanillaPrompts` 时，调度器在最近记录和最久未用候选计算前排除 `vanilla` 槽位，
+因此不会产生空白触发，也不改变心声频率、冷却或队列语义。频率映射如下：
 
 | 值 | 显示 | 平均全局间隔 | 同状态间隔 | 严重状态提醒 |
 | --- | --- | ---: | ---: | ---: |
@@ -99,6 +109,18 @@ IGUI_SIV_<state>_<RISE|FALL>_L<phraseLevel>_<01..08>
 
 ## 6. 颜色与显示
 
+原版槽位通过角色的 `setHaloNote` 进入游戏自己的头顶提示层，使用灰色
+`RGB(170,170,170)`，显示为 `<内容>`，不带图标、括号、升降箭头或斜体。正文固定使用原版
+`Small` 字体，不受角色心声字体选项影响。
+每次仍只显示当前 scheduler 选中的一条，不会在同一个事件里额外追加原创台词。
+
+原创心声同样通过角色的原版 `setHaloNote` 显示，不加括号。正式 Moodle 对应的角色台词会在
+正文的字体段结束后保留两个空格，再追加 `[img=media/ui/Moodles/48/<官方文件名>]`，让图片
+标签单独解析并与正文保持可见间距；该
+通道的原版文本对象启用了任意图片路径。
+角色聊天通道虽然解析 `[img=…]`，但只允许四个硬编码图片名或物品图标，不能显示 Moodle
+完整路径。Mod 不包含图片副本；`FoodEaten` 与原版一样复用饥饿图标。着火和尼古丁戒断不是
+`MoodleType`，正式服没有对应 Moodle 图标，因此保持纯文字，不以自创图标代替。
 客户端运行时读取：
 
 ```text
@@ -116,8 +138,8 @@ component = 0.5 + (highlight - 0.5) * (level / 4)
 正面浅色。渲染参数来自 scheduler 的 `stateId`、`direction` 和 `toLevel`，颜色不会依赖台词
 字符串或客户端可伪造的外部字段。
 
-本地心声外层加全角括号以表示内心独白。可选的 `spoken` 广播不加括号，但默认本地调度器不会
-自动发送它。
+可选的 `spoken` 广播继续作为角色台词显示，不加括号，并复用同一官方 Moodle 图标后缀；它
+不会因为对应 key 来自原版而改走系统提示。默认本地调度器不会自动发送它。
 
 ## 7. 客户端与多人协议
 
@@ -141,7 +163,8 @@ component = 0.5 + (highlight - 0.5) * (level / 4)
 ## 8. 本地化
 
 CN、CH、EN 的自定义 key 集合完全一致。原版槽位通过 `getText` 读取当前游戏语言，因此 Mod
-不会维护原版标题和说明的重复翻译。找不到翻译时，客户端拒绝显示原始 key。
+不会维护原版标题和说明的重复翻译。找不到翻译时，客户端拒绝显示原始 key。原版和原创分类
+由目录元数据决定，不依赖本地化后的字符串，因此切换语言不会改变显示通道。
 
 沙盒翻译使用 Build 42.20 的 `Translate/<locale>/Sandbox.json`；运行代码不包含玩家可见的
 硬编码台词。新增状态、等级或方向时，必须同时更新三语 key、目录 allowlist 和调度测试。

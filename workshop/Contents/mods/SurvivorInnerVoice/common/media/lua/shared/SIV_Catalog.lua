@@ -1,6 +1,6 @@
 SIV = SIV or {}
 
-SIV.VERSION = "0.3.0"
+SIV.VERSION = "0.3.3"
 SIV.MODULE = "SurvivorInnerVoice"
 SIV.PHRASES_PER_LEVEL = 8
 
@@ -10,31 +10,31 @@ local ALL_LEVELS = { 1, 2, 3, 4 }
 -- Formal moodles resolve rise slots 1-2 from the game's own title/description keys.
 SIV.STATES = {
     { id = "on_fire",       bodyFlag = "IsOnFire", specialVanillaKey = "IGUI_StatsAndBody_IsOnFire", levels = { 4 }, polarity = "negative", priority = 150 },
-    { id = "bleeding",      moodle = "BLEEDING",       translationName = "Bleeding",      levels = ALL_LEVELS, polarity = "negative", priority = 140 },
-    { id = "injured",       moodle = "INJURED",        translationName = "Injured",       levels = ALL_LEVELS, polarity = "negative", priority = 135 },
-    { id = "pain",          moodle = "PAIN",           translationName = "Pain",          levels = ALL_LEVELS, polarity = "negative", priority = 130 },
-    { id = "sick",          moodle = "SICK",           translationName = "Sick",          levels = ALL_LEVELS, polarity = "negative", priority = 120 },
-    { id = "panic",         moodle = "PANIC",          translationName = "Panic",         levels = ALL_LEVELS, polarity = "negative", priority = 110 },
-    { id = "cold",          moodle = "HYPOTHERMIA",    translationName = "Hypothermia",   levels = ALL_LEVELS, polarity = "negative", priority = 105 },
-    { id = "hot",           moodle = "HYPERTHERMIA",   translationName = "Hyperthermia",  levels = ALL_LEVELS, polarity = "negative", priority = 105 },
-    { id = "windchill",     moodle = "WINDCHILL",      translationName = "Windchill",     levels = ALL_LEVELS, polarity = "negative", priority = 100 },
-    { id = "has_cold",      moodle = "HAS_A_COLD",     translationName = "HasACold",      levels = ALL_LEVELS, polarity = "negative", priority = 95 },
-    { id = "tired",         moodle = "TIRED",          translationName = "Tired",         levels = ALL_LEVELS, polarity = "negative", priority = 90 },
-    { id = "cant_sprint",   moodle = "CANT_SPRINT",    translationName = "CantSprint",    levels = { 1 },      polarity = "negative", priority = 88 },
-    { id = "endurance",     moodle = "ENDURANCE",      translationName = "Endurance",     levels = ALL_LEVELS, polarity = "negative", priority = 85 },
-    { id = "thirst",        moodle = "THIRST",         translationName = "Thirst",        levels = ALL_LEVELS, polarity = "negative", priority = 80 },
-    { id = "hungry",        moodle = "HUNGRY",         translationName = "Hungry",        levels = ALL_LEVELS, polarity = "negative", priority = 75 },
-    { id = "heavy_load",    moodle = "HEAVY_LOAD",     translationName = "HeavyLoad",     levels = ALL_LEVELS, polarity = "negative", priority = 70 },
-    { id = "food_eaten",    moodle = "FOOD_EATEN",     translationName = "FoodEaten",     levels = ALL_LEVELS, polarity = "positive", priority = 65 },
-    { id = "wet",           moodle = "WET",            translationName = "Wet",           levels = ALL_LEVELS, polarity = "negative", priority = 60 },
-    { id = "noxious_smell", moodle = "NOXIOUS_SMELL",  translationName = "NoxiousSmell",  levels = ALL_LEVELS, polarity = "negative", priority = 55 },
-    { id = "drunk",         moodle = "DRUNK",          translationName = "Drunk",         levels = ALL_LEVELS, polarity = "negative", priority = 54 },
-    { id = "stress",        moodle = "STRESS",         translationName = "Stress",        levels = ALL_LEVELS, polarity = "negative", priority = 50 },
-    { id = "angry",         moodle = "ANGRY",          translationName = "Angry",         levels = ALL_LEVELS, polarity = "negative", priority = 47 },
+    { id = "bleeding",      moodle = "BLEEDING",       translationName = "Bleeding",      moodleIcon = "Status_Bleeding.png",              levels = ALL_LEVELS, polarity = "negative", priority = 140 },
+    { id = "injured",       moodle = "INJURED",        translationName = "Injured",       moodleIcon = "Status_InjuredMinor.png",          levels = ALL_LEVELS, polarity = "negative", priority = 135 },
+    { id = "pain",          moodle = "PAIN",           translationName = "Pain",          moodleIcon = "Mood_Pained.png",                  levels = ALL_LEVELS, polarity = "negative", priority = 130 },
+    { id = "sick",          moodle = "SICK",           translationName = "Sick",          moodleIcon = "Mood_Nauseous.png",                levels = ALL_LEVELS, polarity = "negative", priority = 120 },
+    { id = "panic",         moodle = "PANIC",          translationName = "Panic",         moodleIcon = "Mood_Panicked.png",                levels = ALL_LEVELS, polarity = "negative", priority = 110 },
+    { id = "cold",          moodle = "HYPOTHERMIA",    translationName = "Hypothermia",   moodleIcon = "Status_TemperatureLow.png",        levels = ALL_LEVELS, polarity = "negative", priority = 105 },
+    { id = "hot",           moodle = "HYPERTHERMIA",   translationName = "Hyperthermia",  moodleIcon = "Status_TemperatureHot.png",        levels = ALL_LEVELS, polarity = "negative", priority = 105 },
+    { id = "windchill",     moodle = "WINDCHILL",      translationName = "Windchill",     moodleIcon = "Status_Windchill.png",             levels = ALL_LEVELS, polarity = "negative", priority = 100 },
+    { id = "has_cold",      moodle = "HAS_A_COLD",     translationName = "HasACold",      moodleIcon = "Mood_Ill.png",                     levels = ALL_LEVELS, polarity = "negative", priority = 95 },
+    { id = "tired",         moodle = "TIRED",          translationName = "Tired",         moodleIcon = "Mood_Sleepy.png",                  levels = ALL_LEVELS, polarity = "negative", priority = 90 },
+    { id = "cant_sprint",   moodle = "CANT_SPRINT",    translationName = "CantSprint",    moodleIcon = "Status_MovementRestricted.png",    levels = { 1 },      polarity = "negative", priority = 88 },
+    { id = "endurance",     moodle = "ENDURANCE",      translationName = "Endurance",     moodleIcon = "Status_DifficultyBreathing.png",   levels = ALL_LEVELS, polarity = "negative", priority = 85 },
+    { id = "thirst",        moodle = "THIRST",         translationName = "Thirst",        moodleIcon = "Status_Thirst.png",                levels = ALL_LEVELS, polarity = "negative", priority = 80 },
+    { id = "hungry",        moodle = "HUNGRY",         translationName = "Hungry",        moodleIcon = "Status_Hunger.png",                levels = ALL_LEVELS, polarity = "negative", priority = 75 },
+    { id = "heavy_load",    moodle = "HEAVY_LOAD",     translationName = "HeavyLoad",     moodleIcon = "Status_HeavyLoad.png",             levels = ALL_LEVELS, polarity = "negative", priority = 70 },
+    { id = "food_eaten",    moodle = "FOOD_EATEN",     translationName = "FoodEaten",     moodleIcon = "Status_Hunger.png",                levels = ALL_LEVELS, polarity = "positive", priority = 65 },
+    { id = "wet",           moodle = "WET",            translationName = "Wet",           moodleIcon = "Status_Wet.png",                   levels = ALL_LEVELS, polarity = "negative", priority = 60 },
+    { id = "noxious_smell", moodle = "NOXIOUS_SMELL",  translationName = "NoxiousSmell",  moodleIcon = "Mood_NoxiousSmell.png",            levels = ALL_LEVELS, polarity = "negative", priority = 55 },
+    { id = "drunk",         moodle = "DRUNK",          translationName = "Drunk",         moodleIcon = "Mood_Drunk.png",                   levels = ALL_LEVELS, polarity = "negative", priority = 54 },
+    { id = "stress",        moodle = "STRESS",         translationName = "Stress",        moodleIcon = "Mood_Stressed.png",                levels = ALL_LEVELS, polarity = "negative", priority = 50 },
+    { id = "angry",         moodle = "ANGRY",          translationName = "Angry",         moodleIcon = "Mood_Angry.png",                   levels = ALL_LEVELS, polarity = "negative", priority = 47 },
     { id = "nicotine",      stat = "NICOTINE_WITHDRAWAL", specialVanillaKey = "IGUI_StatsAndBody_NicotineWithdrawal", levels = ALL_LEVELS, polarity = "negative", priority = 45 },
-    { id = "uncomfortable", moodle = "UNCOMFORTABLE",  translationName = "Uncomfortable", levels = ALL_LEVELS, polarity = "negative", priority = 43 },
-    { id = "unhappy",       moodle = "UNHAPPY",        translationName = "Unhappy",       levels = ALL_LEVELS, polarity = "negative", priority = 40 },
-    { id = "bored",         moodle = "BORED",          translationName = "Bored",         levels = ALL_LEVELS, polarity = "negative", priority = 35 },
+    { id = "uncomfortable", moodle = "UNCOMFORTABLE",  translationName = "Uncomfortable", moodleIcon = "Mood_Discomfort.png",              levels = ALL_LEVELS, polarity = "negative", priority = 43 },
+    { id = "unhappy",       moodle = "UNHAPPY",        translationName = "Unhappy",       moodleIcon = "Mood_Sad.png",                     levels = ALL_LEVELS, polarity = "negative", priority = 40 },
+    { id = "bored",         moodle = "BORED",          translationName = "Bored",         moodleIcon = "Mood_Bored.png",                   levels = ALL_LEVELS, polarity = "negative", priority = 35 },
 }
 
 local stateById = {}
@@ -82,7 +82,7 @@ local function normalizeDirection(direction)
     return nil
 end
 
-function SIV.phraseKey(stateId, direction, phraseLevel, phraseIndex)
+local function resolvePhrase(stateId, direction, phraseLevel, phraseIndex)
     local definition = SIV.getState(stateId)
     direction = normalizeDirection(direction)
     phraseLevel = tonumber(phraseLevel)
@@ -96,15 +96,31 @@ function SIV.phraseKey(stateId, direction, phraseLevel, phraseIndex)
     if direction == "rise" then
         if definition.translationName and phraseIndex <= 2 then
             local suffix = phraseIndex == 1 and "lvl" or "desc_lvl"
-            return string.format("Moodles_%s_%s%d", definition.translationName, suffix, phraseLevel)
+            return string.format("Moodles_%s_%s%d", definition.translationName, suffix, phraseLevel), "vanilla"
         end
         if definition.specialVanillaKey and phraseIndex == 1 then
-            return definition.specialVanillaKey
+            return definition.specialVanillaKey, "vanilla"
         end
     end
 
     return string.format("IGUI_SIV_%s_%s_L%d_%02d",
-        definition.id, string.upper(direction), phraseLevel, phraseIndex)
+        definition.id, string.upper(direction), phraseLevel, phraseIndex), "thought"
+end
+
+function SIV.phraseKey(stateId, direction, phraseLevel, phraseIndex)
+    local key = resolvePhrase(stateId, direction, phraseLevel, phraseIndex)
+    return key
+end
+
+function SIV.phraseKind(stateId, direction, phraseLevel, phraseIndex)
+    local _, kind = resolvePhrase(stateId, direction, phraseLevel, phraseIndex)
+    return kind
+end
+
+function SIV.moodleIconPath(stateId)
+    local definition = SIV.getState(stateId)
+    if not definition or not definition.moodleIcon then return nil end
+    return "media/ui/Moodles/48/" .. definition.moodleIcon
 end
 
 function SIV.validSemanticEvent(args)

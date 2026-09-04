@@ -1,5 +1,47 @@
 # Changelog
 
+## 0.3.3
+
+- Fixes vanilla state prompts to the original `Small` halo font and darkens
+  them to neutral gray RGB `(170,170,170)`; character-thought font size remains
+  configurable and defaults to `Medium`.
+- Adds the default-on `Show vanilla state prompts` sandbox option. Disabling it
+  filters vanilla title/description slots before phrase selection, so normal
+  thoughts continue without blank triggers or changed cooldowns.
+- Renames the existing font setting to `Inner-voice font size` to make its
+  scope explicit. The renderer, scheduler cadence, state reads, translations,
+  and official Moodle icon path remain otherwise unchanged.
+
+## 0.3.2
+
+- Routes custom character lines through the vanilla halo-note renderer so full
+  vanilla Moodle texture paths are accepted and the matching icon is visible;
+  the character-chat renderer only accepts four hard-coded image names.
+- Adds a `Small / Medium / Large / Massive` sandbox font setting, defaulting to
+  Medium and applying to both system prompts and character thoughts.
+- Displays vanilla system prompts as neutral-gray `<text>` with no icon or
+  attempted italics, avoiding unsupported Chinese glyphs and font variants.
+- Leaves two literal spaces before a character thought's official Moodle
+  foreground texture so the icon no longer touches the final character.
+- Replaces the uncommon Traditional Chinese variant `喫` with the familiar
+  `吃` in all custom lines.
+- Keeps the original halo anchoring, lifetime, outline/background, state
+  scheduling, and texture loading; no custom font, renderer, queue, or icon
+  asset is added.
+
+## 0.3.1
+
+- Keeps vanilla Moodle titles, descriptions, and special-state labels in the
+  existing phrase rotation while displaying them as white official halo
+  prompts prefixed by `※`, without arrows or parentheses.
+- Keeps original character thoughts in the existing colored dialogue bubble
+  channel without parentheses and appends the matching vanilla B42 Moodle icon.
+- Reuses the game's built-in image markup and Moodle textures; no custom icon
+  assets or renderer are added. Non-Moodle special states do not receive a
+  fabricated icon.
+- Does not add extra messages, scans, timers, queues, localization copies, or
+  changes to state detection and scheduling.
+
 ## 0.3.0
 
 - Covers 25 directly perceptible negative conditions plus the positive

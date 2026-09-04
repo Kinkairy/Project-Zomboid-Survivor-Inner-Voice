@@ -30,6 +30,7 @@ local function makeConfig(config)
         recentHistory = math.floor(numberOr(config.recentHistory, DEFAULTS.recentHistory, 1)),
         jitterRatio = math.min(0.9, numberOr(config.jitterRatio, DEFAULTS.jitterRatio, 0)),
         queueEveryChange = config.queueEveryChange == true,
+        includeVanillaPrompts = config.includeVanillaPrompts ~= false,
     }
 end
 
@@ -83,7 +84,9 @@ local function choosePhrase(state, stateId, direction, phraseLevel)
     local oldestUse = math.huge
     for phraseIndex = 1, SIV.PHRASES_PER_LEVEL do
         local key = SIV.phraseKey(stateId, direction, phraseLevel, phraseIndex)
-        if not historyContains(state.history, key) then
+        local allowedKind = state.config.includeVanillaPrompts
+            or SIV.phraseKind(stateId, direction, phraseLevel, phraseIndex) ~= "vanilla"
+        if allowedKind and not historyContains(state.history, key) then
             local usedAt = state.lastUsedByKey[key] or 0
             if usedAt < oldestUse then
                 available = { phraseIndex }
@@ -108,10 +111,14 @@ local function choosePhrase(state, stateId, direction, phraseLevel)
         local oldestCandidate = math.huge
         for candidate = 1, SIV.PHRASES_PER_LEVEL do
             local key = SIV.phraseKey(stateId, direction, phraseLevel, candidate)
-            local usedAt = state.lastUsedByKey[key] or 0
-            if usedAt < oldestCandidate then
-                oldestCandidate = usedAt
-                phraseIndex = candidate
+            local allowedKind = state.config.includeVanillaPrompts
+                or SIV.phraseKind(stateId, direction, phraseLevel, candidate) ~= "vanilla"
+            if allowedKind then
+                local usedAt = state.lastUsedByKey[key] or 0
+                if usedAt < oldestCandidate then
+                    oldestCandidate = usedAt
+                    phraseIndex = candidate
+                end
             end
         end
     end

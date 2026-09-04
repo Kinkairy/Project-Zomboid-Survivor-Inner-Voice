@@ -6,5 +6,13 @@
     "Sandbox_SurvivorInnerVoice_Frequency_option2": "较少",
     "Sandbox_SurvivorInnerVoice_Frequency_option3": "普通",
     "Sandbox_SurvivorInnerVoice_Frequency_option4": "频繁",
-    "Sandbox_SurvivorInnerVoice_Frequency_option5": "很频繁"
+    "Sandbox_SurvivorInnerVoice_Frequency_option5": "很频繁",
+    "Sandbox_SurvivorInnerVoice_FontSize": "角色心声字体大小",
+    "Sandbox_SurvivorInnerVoice_FontSize_tooltip": "控制角色心声文字大小。默认为中；原版状态提示固定使用小号字。",
+    "Sandbox_SurvivorInnerVoice_FontSize_option1": "小",
+    "Sandbox_SurvivorInnerVoice_FontSize_option2": "中",
+    "Sandbox_SurvivorInnerVoice_FontSize_option3": "大",
+    "Sandbox_SurvivorInnerVoice_FontSize_option4": "特大",
+    "Sandbox_SurvivorInnerVoice_ShowVanillaPrompts": "显示原版状态提示",
+    "Sandbox_SurvivorInnerVoice_ShowVanillaPrompts_tooltip": "开启后，原版状态标题和描述会显示为小号灰色系统提示；关闭后只显示角色心声。"
 }

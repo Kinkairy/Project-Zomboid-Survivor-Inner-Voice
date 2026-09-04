@@ -19,6 +19,13 @@ local function sandboxNumber(name, fallback)
     return tonumber(page and page[name]) or fallback
 end
 
+local function sandboxBoolean(name, fallback)
+    local page = SandboxVars and SandboxVars.SurvivorInnerVoice
+    local value = page and page[name]
+    if value == nil then return fallback end
+    return value == true
+end
+
 local function schedulerConfig()
     local frequency = math.floor(sandboxNumber("Frequency", 3))
     local interval = INTERVAL_BY_FREQUENCY[frequency] or INTERVAL_BY_FREQUENCY[3]
@@ -31,6 +38,7 @@ local function schedulerConfig()
         recentHistory = 8,
         jitterRatio = 0.3,
         queueEveryChange = frequency == 5,
+        includeVanillaPrompts = sandboxBoolean("ShowVanillaPrompts", true),
     }
 end
 
@@ -119,20 +127,52 @@ local function eventColor(stateId, direction, toLevel)
     return SIV.interpolateVanillaColor(colorLevel, vanillaHighlight(positive))
 end
 
+local FONT_BY_SIZE = { "Small", "Medium", "Large", "Massive" }
+
+local function fontName()
+    local value = math.floor(sandboxNumber("FontSize", 2))
+    return FONT_BY_SIZE[value] or FONT_BY_SIZE[2]
+end
+
+local function fontText(text)
+    return "[fnt=" .. fontName() .. "]" .. text .. "[/]"
+end
+
+local function systemPrompt(text)
+    return "[fnt=Small]<" .. text .. ">[/]"
+end
+
+local function characterLine(text, stateId)
+    local line = fontText(text)
+    local iconPath = SIV.moodleIconPath(stateId)
+    if not iconPath then return line end
+    return line .. "  [img=" .. iconPath .. "]"
+end
+
+local function colorByte(value)
+    return math.floor(math.max(0, math.min(1, tonumber(value) or 0)) * 255 + 0.5)
+end
+
+local function showCharacterLine(player, text, stateId, direction, toLevel)
+    local red, green, blue = eventColor(stateId, direction, toLevel)
+    player:setHaloNote(characterLine(text, stateId),
+        colorByte(red), colorByte(green), colorByte(blue), 128)
+end
+
 local function showThought(player, event)
     local text = getText(event.key)
     if not text or text == event.key then return end
-    local red, green, blue = eventColor(event.stateId, event.direction, event.toLevel)
-    player:addLineChatElement("（" .. text .. "）", red, green, blue,
-        UIFont.Medium, 1.5, "default", true, true, true, true, true, true)
+    if SIV.phraseKind(event.stateId, event.direction, event.phraseLevel, event.phraseIndex) == "vanilla" then
+        player:setHaloNote(systemPrompt(text), 170, 170, 170, 128)
+        return
+    end
+    showCharacterLine(player, text, event.stateId, event.direction, event.toLevel)
 end
 
 local function showSpoken(player, key, stateId, direction, toLevel)
     local text = getText(key)
     if not text or text == key then return end
-    local red, green, blue = eventColor(stateId, direction, toLevel)
-    player:addLineChatElement(text, red, green, blue,
-        UIFont.Medium, 1.5, "default", true, true, true, true, true, true)
+    showCharacterLine(player, text, stateId, direction, toLevel)
 end
 
 local function onPlayerUpdate(player)

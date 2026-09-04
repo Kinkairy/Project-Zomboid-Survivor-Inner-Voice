@@ -6,5 +6,13 @@
     "Sandbox_SurvivorInnerVoice_Frequency_option2": "Rare",
     "Sandbox_SurvivorInnerVoice_Frequency_option3": "Normal",
     "Sandbox_SurvivorInnerVoice_Frequency_option4": "Frequent",
-    "Sandbox_SurvivorInnerVoice_Frequency_option5": "Very frequent"
+    "Sandbox_SurvivorInnerVoice_Frequency_option5": "Very frequent",
+    "Sandbox_SurvivorInnerVoice_FontSize": "Inner-voice font size",
+    "Sandbox_SurvivorInnerVoice_FontSize_tooltip": "Controls the size of inner-voice lines. Defaults to Medium; vanilla state prompts always use Small.",
+    "Sandbox_SurvivorInnerVoice_FontSize_option1": "Small",
+    "Sandbox_SurvivorInnerVoice_FontSize_option2": "Medium",
+    "Sandbox_SurvivorInnerVoice_FontSize_option3": "Large",
+    "Sandbox_SurvivorInnerVoice_FontSize_option4": "Massive",
+    "Sandbox_SurvivorInnerVoice_ShowVanillaPrompts": "Show vanilla state prompts",
+    "Sandbox_SurvivorInnerVoice_ShowVanillaPrompts_tooltip": "When enabled, vanilla state titles and descriptions appear as small gray system prompts. Disable this to show inner-voice lines only."
 }

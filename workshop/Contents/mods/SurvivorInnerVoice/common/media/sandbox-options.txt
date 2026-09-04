@@ -5,3 +5,15 @@ option SurvivorInnerVoice.Frequency = {
     page = SurvivorInnerVoice,
     translation = SurvivorInnerVoice_Frequency,
 }
+
+option SurvivorInnerVoice.FontSize = {
+    type = enum, numValues = 4, default = 2,
+    page = SurvivorInnerVoice,
+    translation = SurvivorInnerVoice_FontSize,
+}
+
+option SurvivorInnerVoice.ShowVanillaPrompts = {
+    type = boolean, default = true,
+    page = SurvivorInnerVoice,
+    translation = SurvivorInnerVoice_ShowVanillaPrompts,
+}
