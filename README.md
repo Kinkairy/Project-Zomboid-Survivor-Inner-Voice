@@ -9,7 +9,6 @@ Survivor Inner Voice（幸存者心声）是面向 Project Zomboid Build 42.20 �
 自言自语；状态改善或完全恢复时也会出现对应反应。
 
 - 当前版本：`0.3.3`
-- 维护状态：冷维护；仅处理游戏兼容性、安全、数据损坏/明显性能回退及所有者明确批准的缺陷
 - Mod ID：`SurvivorInnerVoice`
 - Workshop ID：`3793128772`
 - 支持语言：简体中文、繁体中文、English
@@ -104,8 +103,6 @@ to hunger, thirst, fatigue, pain, panic, heavy load, and other current condition
 overhead self-talk. Matching reactions can also appear when a condition improves or fully clears.
 
 - Current version: `0.3.3`
-- Maintenance status: cold maintenance; limited to game compatibility, security, data-loss or material
-  performance regressions, and defects explicitly approved by the owner
 - Mod ID: `SurvivorInnerVoice`
 - Workshop ID: `3793128772`
 - Languages: Simplified Chinese, Traditional Chinese, and English
