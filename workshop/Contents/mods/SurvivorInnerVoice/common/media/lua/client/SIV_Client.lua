@@ -26,9 +26,12 @@ local function sandboxBoolean(name, fallback)
     return value == true
 end
 
-local function schedulerConfig()
+local function frequencyInterval()
     local frequency = math.floor(sandboxNumber("Frequency", 3))
-    local interval = INTERVAL_BY_FREQUENCY[frequency] or INTERVAL_BY_FREQUENCY[3]
+    return INTERVAL_BY_FREQUENCY[frequency] or INTERVAL_BY_FREQUENCY[3]
+end
+
+local function schedulerConfig(interval, includeVanillaPrompts)
     return {
         startupDelay = interval,
         minimumInterval = 3,
@@ -37,15 +40,15 @@ local function schedulerConfig()
         reminderInterval = interval * 30,
         recentHistory = 8,
         jitterRatio = 0.3,
-        queueEveryChange = frequency == 5,
-        includeVanillaPrompts = sandboxBoolean("ShowVanillaPrompts", true),
+        includeVanillaPrompts = includeVanillaPrompts,
     }
 end
 
 local function getRuntime(player)
     local runtime = runtimeByPlayer[player]
     if not runtime then
-        runtime = { lastScan = 0, scheduler = SIV.Scheduler.new(schedulerConfig()) }
+        runtime = { lastScan = 0, scheduler = SIV.Scheduler.new(schedulerConfig(
+            frequencyInterval(), sandboxBoolean("ShowVanillaPrompts", true))) }
         runtimeByPlayer[player] = runtime
     end
     return runtime
@@ -162,7 +165,7 @@ end
 local function showThought(player, event)
     local text = getText(event.key)
     if not text or text == event.key then return end
-    if SIV.phraseKind(event.stateId, event.direction, event.phraseLevel, event.phraseIndex) == "vanilla" then
+    if SIV.phraseKind(event.stateId, event.direction, event.phraseLevel, event.phraseIndex, event.toLevel) == "vanilla" then
         player:setHaloNote(systemPrompt(text), 170, 170, 170, 128)
         return
     end
@@ -182,6 +185,13 @@ local function onPlayerUpdate(player)
     if now - runtime.lastScan < 1 then return end
     runtime.lastScan = now
 
+    local interval = frequencyInterval()
+    local includeVanillaPrompts = sandboxBoolean("ShowVanillaPrompts", true)
+    local config = runtime.scheduler.config
+    if config.globalCooldown ~= interval or config.includeVanillaPrompts ~= includeVanillaPrompts then
+        SIV.Scheduler.reconfigure(runtime.scheduler, schedulerConfig(interval, includeVanillaPrompts), now)
+    end
+
     local event = SIV.Scheduler.scan(runtime.scheduler, snapshotFor(player), now)
     if event then showThought(player, event) end
 end
@@ -190,7 +200,7 @@ local function onServerCommand(module, command, args)
     if module ~= SIV.MODULE or command ~= "spoken" or not SIV.validSemanticEvent(args) then return end
     local onlineId = tonumber(args.onlineId)
     local speaker = onlineId and getPlayerByOnlineID(onlineId) or nil
-    local key = SIV.phraseKey(args.stateId, args.direction, args.phraseLevel, args.phraseIndex)
+    local key = SIV.phraseKey(args.stateId, args.direction, args.phraseLevel, args.phraseIndex, args.toLevel)
     if speaker and key then showSpoken(speaker, key, args.stateId, args.direction, args.toLevel) end
 end
 

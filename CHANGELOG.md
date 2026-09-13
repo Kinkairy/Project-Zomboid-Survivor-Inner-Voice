@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.5
+
+- Frequency and vanilla-prompt sandbox changes now take effect for existing characters after the game synchronizes them.
+- Future remaining waits are rescaled to the new frequency without rerolling randomness or clearing pending state and phrase history.
+
+## 0.3.4
+
+- Recovery lines now describe the remaining level, including full recovery and skipped levels.
+- Every frequency merges outdated transitions; the queue is bounded by the 26 states and no longer sorted each scan.
+- Corrected English recovery prose and cross-language meaning; made six food-related thoughts more natural.
+- All six locale files are generated and checked against one complete trilingual catalog.
+- Clarified that same-state reminder protection does not suppress new symptom changes.
+
 ## 0.3.3
 
 - Fixes vanilla state prompts to the original `Small` halo font and darkens

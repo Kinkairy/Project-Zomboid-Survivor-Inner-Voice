@@ -10,7 +10,6 @@ local DEFAULTS = {
     reminderInterval = 600,
     recentHistory = 8,
     jitterRatio = 0.3,
-    queueEveryChange = false,
 }
 
 local function numberOr(value, fallback, minimum)
@@ -29,7 +28,6 @@ local function makeConfig(config)
         reminderInterval = numberOr(config.reminderInterval, DEFAULTS.reminderInterval, 10),
         recentHistory = math.floor(numberOr(config.recentHistory, DEFAULTS.recentHistory, 1)),
         jitterRatio = math.min(0.9, numberOr(config.jitterRatio, DEFAULTS.jitterRatio, 0)),
-        queueEveryChange = config.queueEveryChange == true,
         includeVanillaPrompts = config.includeVanillaPrompts ~= false,
     }
 end
@@ -66,6 +64,31 @@ local function randomFraction(state)
     return math.max(0, math.min(1, value or 0.5))
 end
 
+local function rescaleRemaining(deadline, now, oldInterval, newInterval)
+    if deadline <= now or oldInterval == newInterval then return deadline end
+    return now + (deadline - now) * newInterval / oldInterval
+end
+
+function SIV.Scheduler.reconfigure(state, config, now)
+    local old = state.config
+    local updated = makeConfig(config)
+    -- Keep elapsed waits, random samples, pending events and history; only the
+    -- remaining wait changes. Expired deadlines never become future deadlines.
+    if state.initialized then
+        if old.startupDelay > 0 then
+            state.startupReadyAt = rescaleRemaining(state.startupReadyAt, now, old.startupDelay, updated.startupDelay)
+        end
+        state.nextGlobalAt = rescaleRemaining(state.nextGlobalAt, now, old.globalCooldown, updated.globalCooldown)
+        for id, deadline in pairs(state.nextByState) do
+            state.nextByState[id] = rescaleRemaining(deadline, now, old.stateCooldown, updated.stateCooldown)
+        end
+        for id, deadline in pairs(state.nextReminderAt) do
+            state.nextReminderAt[id] = rescaleRemaining(deadline, now, old.reminderInterval, updated.reminderInterval)
+        end
+    end
+    state.config = updated
+end
+
 local function jitteredDelay(state, base, minimum)
     local ratio = state.config.jitterRatio
     local multiplier = 1 - ratio + randomFraction(state) * ratio * 2
@@ -79,13 +102,13 @@ local function historyContains(history, key)
     return false
 end
 
-local function choosePhrase(state, stateId, direction, phraseLevel)
+local function choosePhrase(state, stateId, direction, phraseLevel, toLevel)
     local available = {}
     local oldestUse = math.huge
     for phraseIndex = 1, SIV.PHRASES_PER_LEVEL do
-        local key = SIV.phraseKey(stateId, direction, phraseLevel, phraseIndex)
+        local key = SIV.phraseKey(stateId, direction, phraseLevel, phraseIndex, toLevel)
         local allowedKind = state.config.includeVanillaPrompts
-            or SIV.phraseKind(stateId, direction, phraseLevel, phraseIndex) ~= "vanilla"
+            or SIV.phraseKind(stateId, direction, phraseLevel, phraseIndex, toLevel) ~= "vanilla"
         if allowedKind and not historyContains(state.history, key) then
             local usedAt = state.lastUsedByKey[key] or 0
             if usedAt < oldestUse then
@@ -110,9 +133,9 @@ local function choosePhrase(state, stateId, direction, phraseLevel)
     else
         local oldestCandidate = math.huge
         for candidate = 1, SIV.PHRASES_PER_LEVEL do
-            local key = SIV.phraseKey(stateId, direction, phraseLevel, candidate)
+            local key = SIV.phraseKey(stateId, direction, phraseLevel, candidate, toLevel)
             local allowedKind = state.config.includeVanillaPrompts
-                or SIV.phraseKind(stateId, direction, phraseLevel, candidate) ~= "vanilla"
+                or SIV.phraseKind(stateId, direction, phraseLevel, candidate, toLevel) ~= "vanilla"
             if allowedKind then
                 local usedAt = state.lastUsedByKey[key] or 0
                 if usedAt < oldestCandidate then
@@ -135,16 +158,19 @@ local function remember(state, key)
 end
 
 local function removePendingForState(state, stateId)
+    local removed
     for index = #state.pending, 1, -1 do
         if state.pending[index].stateId == stateId then
-            table.remove(state.pending, index)
+            removed = table.remove(state.pending, index)
         end
     end
+    return removed
 end
 
-local function enqueue(state, definition, direction, fromLevel, toLevel, now, replace)
-    if replace then removePendingForState(state, definition.id) end
-    state.nextSequence = state.nextSequence + 1
+local function enqueue(state, definition, direction, fromLevel, toLevel, now)
+    -- At most one current transition per state, at every frequency.
+    local previous = removePendingForState(state, definition.id)
+    if not previous then state.nextSequence = state.nextSequence + 1 end
     state.pending[#state.pending + 1] = {
         stateId = definition.id,
         direction = direction,
@@ -154,17 +180,18 @@ local function enqueue(state, definition, direction, fromLevel, toLevel, now, re
         level = toLevel,
         phraseLevel = direction == "fall" and fromLevel or toLevel,
         priority = definition.priority,
-        createdAt = now,
-        sequence = state.nextSequence,
+        -- Keep the waiting position while updating meaning, so equal priorities
+        -- cannot be perpetually postponed by repeated replacement.
+        createdAt = previous and previous.createdAt or now,
+        sequence = previous and previous.sequence or state.nextSequence,
     }
 end
 
-local function sortCandidates(candidates)
-    table.sort(candidates, function(a, b)
-        if a.priority ~= b.priority then return a.priority > b.priority end
-        if a.createdAt ~= b.createdAt then return a.createdAt < b.createdAt end
-        return (a.sequence or math.huge) < (b.sequence or math.huge)
-    end)
+local function precedes(a, b)
+    if not b then return true end
+    if a.priority ~= b.priority then return a.priority > b.priority end
+    if a.createdAt ~= b.createdAt then return a.createdAt < b.createdAt end
+    return (a.sequence or math.huge) < (b.sequence or math.huge)
 end
 
 local function allowed(state, candidate, now)
@@ -189,7 +216,7 @@ local function initialize(state, snapshot, now)
         local level = SIV.normalizeSeverity(definition.id, snapshot[definition.id])
         state.levels[definition.id] = level
         if useStartupDelay and level > 0 then
-            enqueue(state, definition, "rise", 0, level, now, true)
+            enqueue(state, definition, "rise", 0, level, now)
         end
         if level >= 3 then
             state.lastReminder[definition.id] = now
@@ -204,8 +231,11 @@ local function refreshDuringStartup(state, snapshot, now)
     for _, definition in ipairs(SIV.STATES) do
         local level = SIV.normalizeSeverity(definition.id, snapshot[definition.id])
         state.levels[definition.id] = level
-        removePendingForState(state, definition.id)
-        if level > 0 then enqueue(state, definition, "rise", 0, level, now, false) end
+        if level > 0 then
+            enqueue(state, definition, "rise", 0, level, now)
+        else
+            removePendingForState(state, definition.id)
+        end
     end
 end
 
@@ -231,8 +261,7 @@ function SIV.Scheduler.scan(state, snapshot, now)
 
         if current ~= previous then
             local direction = current > previous and "rise" or "fall"
-            enqueue(state, definition, direction, previous, current, now,
-                not state.config.queueEveryChange)
+            enqueue(state, definition, direction, previous, current, now)
         elseif current >= 3 and now >= (state.nextReminderAt[stateId] or math.huge) then
             reminders[#reminders + 1] = {
                 stateId = stateId,
@@ -248,23 +277,23 @@ function SIV.Scheduler.scan(state, snapshot, now)
         end
     end
 
-    local candidates = {}
-    for _, candidate in ipairs(state.pending) do candidates[#candidates + 1] = candidate end
-    for _, candidate in ipairs(reminders) do candidates[#candidates + 1] = candidate end
-    if #candidates == 0 then return nil end
-    sortCandidates(candidates)
-
+    -- Update the snapshot/queue even during cooldown, but never clone or sort it.
+    if now - state.lastGlobal < state.config.minimumInterval then return nil end
     local selected
-    for _, candidate in ipairs(candidates) do
-        if allowed(state, candidate, now) then
+    for _, candidate in ipairs(state.pending) do
+        if allowed(state, candidate, now) and precedes(candidate, selected) then
             selected = candidate
-            break
+        end
+    end
+    for _, candidate in ipairs(reminders) do
+        if allowed(state, candidate, now) and precedes(candidate, selected) then
+            selected = candidate
         end
     end
     if not selected then return nil end
 
-    local phraseIndex = choosePhrase(state, selected.stateId, selected.direction, selected.phraseLevel)
-    local key = SIV.phraseKey(selected.stateId, selected.direction, selected.phraseLevel, phraseIndex)
+    local phraseIndex = choosePhrase(state, selected.stateId, selected.direction, selected.phraseLevel, selected.toLevel)
+    local key = SIV.phraseKey(selected.stateId, selected.direction, selected.phraseLevel, phraseIndex, selected.toLevel)
     if selected.sequence then
         for index = #state.pending, 1, -1 do
             if state.pending[index].sequence == selected.sequence then

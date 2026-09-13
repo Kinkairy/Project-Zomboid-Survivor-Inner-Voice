@@ -1,6 +1,6 @@
 SIV = SIV or {}
 
-SIV.VERSION = "0.3.3"
+SIV.VERSION = "0.3.5"
 SIV.MODULE = "SurvivorInnerVoice"
 SIV.PHRASES_PER_LEVEL = 8
 
@@ -82,7 +82,7 @@ local function normalizeDirection(direction)
     return nil
 end
 
-local function resolvePhrase(stateId, direction, phraseLevel, phraseIndex)
+local function resolvePhrase(stateId, direction, phraseLevel, phraseIndex, toLevel)
     local definition = SIV.getState(stateId)
     direction = normalizeDirection(direction)
     phraseLevel = tonumber(phraseLevel)
@@ -92,6 +92,20 @@ local function resolvePhrase(stateId, direction, phraseLevel, phraseIndex)
     phraseIndex = math.floor(phraseIndex)
     if not containsLevel(definition, phraseLevel) then return nil end
     if phraseIndex < 1 or phraseIndex > SIV.PHRASES_PER_LEVEL then return nil end
+
+    -- The wire field retains the source severity. Wording describes what remains,
+    -- including skipped levels; the lowest fall group means the state has cleared.
+    if toLevel ~= nil then
+        toLevel = tonumber(toLevel)
+        if not toLevel or toLevel ~= math.floor(toLevel) then return nil end
+        if toLevel ~= 0 and not containsLevel(definition, toLevel) then return nil end
+        if direction == "fall" then
+            if toLevel < 0 or toLevel >= phraseLevel then return nil end
+            phraseLevel = toLevel == 0 and definition.levels[1] or toLevel + 1
+        elseif toLevel ~= phraseLevel then
+            return nil
+        end
+    end
 
     if direction == "rise" then
         if definition.translationName and phraseIndex <= 2 then
@@ -107,13 +121,13 @@ local function resolvePhrase(stateId, direction, phraseLevel, phraseIndex)
         definition.id, string.upper(direction), phraseLevel, phraseIndex), "thought"
 end
 
-function SIV.phraseKey(stateId, direction, phraseLevel, phraseIndex)
-    local key = resolvePhrase(stateId, direction, phraseLevel, phraseIndex)
+function SIV.phraseKey(stateId, direction, phraseLevel, phraseIndex, toLevel)
+    local key = resolvePhrase(stateId, direction, phraseLevel, phraseIndex, toLevel)
     return key
 end
 
-function SIV.phraseKind(stateId, direction, phraseLevel, phraseIndex)
-    local _, kind = resolvePhrase(stateId, direction, phraseLevel, phraseIndex)
+function SIV.phraseKind(stateId, direction, phraseLevel, phraseIndex, toLevel)
+    local _, kind = resolvePhrase(stateId, direction, phraseLevel, phraseIndex, toLevel)
     return kind
 end
 
@@ -125,6 +139,7 @@ end
 
 function SIV.validSemanticEvent(args)
     if type(args) ~= "table" then return false end
+    if args.direction ~= "rise" and args.direction ~= "fall" then return false end
     local phraseLevel = tonumber(args.phraseLevel)
     local phraseIndex = tonumber(args.phraseIndex)
     local toLevel = tonumber(args.toLevel)
@@ -134,7 +149,7 @@ function SIV.validSemanticEvent(args)
     if toLevel < 0 or toLevel > 4 then return false end
     if args.direction == "rise" and toLevel ~= phraseLevel then return false end
     if args.direction == "fall" and toLevel >= phraseLevel then return false end
-    return SIV.phraseKey(args.stateId, args.direction, phraseLevel, phraseIndex) ~= nil
+    return SIV.phraseKey(args.stateId, args.direction, phraseLevel, phraseIndex, toLevel) ~= nil
 end
 
 function SIV.interpolateVanillaColor(level, highlight)

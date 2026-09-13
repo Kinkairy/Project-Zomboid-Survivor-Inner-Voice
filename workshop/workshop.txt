@@ -7,11 +7,11 @@ description=[h1]幸存者心声[/h1]
 [h1]状态心声[/h1]
 
 [list]
-[*]覆盖角色能够直接感受到的主要原版状态，也包含吃饱等正面状态。
+[*]角色能够直接感受到的主要原版状态，也包含吃饱等正面状态。
 [*]同一种状态和严重程度有多句不同说法，减少重复感。
 [*]状态出现、加重、减轻和完全恢复时，都可能出现对应台词。
 [*]进入世界后会先等待一段时间，不会刚加载完成就立刻刷出台词。
-[*]原版状态标题和说明固定使用小号深灰色 <内容> 头顶提示，不带图标或斜体；原创角色心声不加括号，并在句末留出间距后显示对应的原版 Moodle 图标。
+[*]原版状态标题和说明固定使用小号深灰色 <内容> 头顶提示；原创角色心声不加括号，并在句末显示对应的原版 Moodle 图标。
 [/list]
 
 [h1]严重程度与颜色[/h1]
@@ -29,7 +29,7 @@ description=[h1]幸存者心声[/h1]
 [*]“显示原版状态提示”默认开启；关闭后只显示角色心声。
 [*]台词频率可选很少、较少、普通、频繁、很频繁。
 [*]实际出现时间会随机变化，不会按固定秒数重复。
-[*]“很频繁”会保留每一次状态等级变化，方便观察或调试。
+[*]所有频率都只保留每种状态的最新变化，不会积压并补播过时症状。
 [/list]
 
 [h1]兼容性[/h1]
@@ -38,7 +38,7 @@ description=[h1]幸存者心声[/h1]
 
 [b]Workshop ID:[/b] 3793128772
 [b]Mod ID:[/b] SurvivorInnerVoice
-[b]Version:[/b] 0.3.3
+[b]Version:[/b] 0.3.5
 
 [hr]
 
@@ -53,7 +53,7 @@ description=[h1]幸存者心声[/h1]
 [*]Each state and severity has multiple lines to reduce repetition.
 [*]Lines can appear when a state begins, worsens, improves, or fully clears.
 [*]A short randomized delay after entering the world prevents immediate message spam.
-[*]Vanilla state titles and descriptions use a fixed Small dark-gray <text> overhead prompt without an icon or italics; original thoughts are unwrapped and leave a gap before the matching vanilla Moodle icon.
+[*]Vanilla state titles and descriptions use a fixed Small dark-gray <text> overhead prompt; original thoughts are unwrapped and leave a gap before the matching vanilla Moodle icon.
 [/list]
 
 [h1]Severity and Color[/h1]
@@ -71,7 +71,7 @@ description=[h1]幸存者心声[/h1]
 [*]Show vanilla state prompts is enabled by default; disable it to show only character thoughts.
 [*]Frequency offers Very Rare, Rare, Normal, Frequent, or Very Frequent.
 [*]Actual timing is randomized instead of repeating at fixed intervals.
-[*]Very Frequent preserves every state-level change for observation and debugging.
+[*]Every frequency keeps only the latest change per state, without building up and replaying outdated symptoms.
 [/list]
 
 [h1]Compatibility[/h1]
@@ -80,6 +80,6 @@ Supports Project Zomboid Build 42.20, singleplayer, multiplayer, and dedicated s
 
 [b]Workshop ID:[/b] 3793128772
 [b]Mod ID:[/b] SurvivorInnerVoice
-[b]Version:[/b] 0.3.3
+[b]Version:[/b] 0.3.5
 tags=Build 42;Multiplayer;Interface;QOL;Realistic
 visibility=public

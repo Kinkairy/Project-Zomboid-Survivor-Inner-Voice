@@ -8,7 +8,7 @@ Survivor Inner Voice（幸存者心声）是面向 Project Zomboid Build 42.20 �
 角色会根据饥饿、口渴、疲劳、疼痛、恐慌、负重和其他当前状态，用简短直白的头顶文字
 自言自语；状态改善或完全恢复时也会出现对应反应。
 
-- 当前版本：`0.3.3`
+- 当前版本：`0.3.5`
 - Mod ID：`SurvivorInnerVoice`
 - Workshop ID：`3793128772`
 - 支持语言：简体中文、繁体中文、English
@@ -52,8 +52,8 @@ Survivor Inner Voice（幸存者心声）是面向 Project Zomboid Build 42.20 �
 
 - 进入世界后先等待一段随机时间，不会刚加载完成就立刻刷状态。
 - 全局最短安全间隔固定为 3 秒。
-- 普通档位会用最新状态变化替换同状态的旧等待项。
-- “很频繁”保留每一次升降变化，便于观察和调试。
+- 所有档位都用最新状态变化替换同状态的旧等待项，最多等待 26 条，不补播过时症状。
+- 状态升降仍可触发轻微症状提示；同状态提醒保护间隔不会阻挡新的变化。
 - 持续处于三级或四级的严重状态会按更长的随机周期再次提醒。
 
 ### 架构
@@ -102,7 +102,7 @@ Survivor Inner Voice is a status-reaction Mod for Project Zomboid Build 42.20. Y
 to hunger, thirst, fatigue, pain, panic, heavy load, and other current conditions with short, readable
 overhead self-talk. Matching reactions can also appear when a condition improves or fully clears.
 
-- Current version: `0.3.3`
+- Current version: `0.3.5`
 - Mod ID: `SurvivorInnerVoice`
 - Workshop ID: `3793128772`
 - Languages: Simplified Chinese, Traditional Chinese, and English
@@ -154,8 +154,8 @@ Internal average intervals are 60, 35, 20, 12, and 6 seconds. Every actual delay
 
 - A randomized startup quiet period prevents immediate messages after entering the world.
 - The global minimum safety interval is three seconds.
-- Ordinary modes keep the newest pending change for the same state.
-- `Very Frequent` preserves every upward and downward transition for observation and debugging.
+- All modes keep only the newest pending change per state: at most 26 pending entries, without replaying outdated symptoms.
+- New changes can still trigger mild-symptom reactions; same-state reminder protection does not suppress transitions.
 - Severe level-three and level-four conditions can produce a later reminder on a longer randomized timer.
 
 ### Architecture
