@@ -1,6 +1,6 @@
 version=1
 id=3793128772
-title=幸存者心声 / Survivor Inner Voice
+title=Survivor Inner Voice
 description=[h1]幸存者心声[/h1]
 [quote]角色会根据自己的饥饿、口渴、疲劳、疼痛、情绪和其他当前状态，用简短直白的头顶文字自言自语。[/quote]
 

@@ -1,4 +1,4 @@
-name=幸存者心声 / Survivor Inner Voice
+name=Survivor Inner Voice
 id=SurvivorInnerVoice
 description=Localized overhead reactions for 25 perceptible character conditions, with varied lines, randomized timing, and severity colors.
 modversion=0.3.5
