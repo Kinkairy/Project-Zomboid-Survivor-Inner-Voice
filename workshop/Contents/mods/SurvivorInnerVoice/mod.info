@@ -1,5 +1,6 @@
 name=Survivor Inner Voice
 id=SurvivorInnerVoice
+icon=icon.png
 description=Adds short overhead inner thoughts for hunger, thirst, fatigue, pain, mood, and other directly perceptible conditions, with varied lines, randomized timing, and severity colors. / 根据饥饿、口渴、疲劳、疼痛、情绪等角色可直接感知的状态显示简短头顶心声，并提供多样台词、随机时间和严重度颜色。 / 根據飢餓、口渴、疲勞、疼痛、情緒等角色可直接感知的狀態顯示簡短頭頂心聲，並提供多樣台詞、隨機時間和嚴重度顏色。
 modversion=0.3.5
 versionMin=42.20
